@@ -1,0 +1,16 @@
+button{
+    background-color: rgb(162, 255, 224);
+}
+
+body{
+    display: grid;
+    font-family: Arial, Helvetica, sans-serif;
+    grid-template-columns: 1fr;
+}
+
+#questionContainer{
+    display: grid;
+    gap: 10px;
+    font-size: 2em;
+    grid-template-columns: 1fr;
+}
