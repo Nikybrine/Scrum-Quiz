@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const csvData = `
+  const questionData = `
 Was ist Scrum?;Scrum ist ein Vorgehensmodell für agile Softwareentwicklung und Projektmanagement, das in den 1990er Jahren von Jeff Sutherland und Ken Schwaber entwickelt wurde.;Scrum ist eine Sportart, bei der zwei Teams gegeneinander antreten.;Scrum ist ein Tool zur Automatisierung von Softwaretests.
 Worauf basiert Scrum?;Scrum basiert auf Empirie und Lean Thinking.;Scrum basiert auf traditionellen Wasserfallmodellen.;Scrum basiert ausschließlich auf mathematischen Algorithmen.
 Was sind die drei Säulen von Scrum?;Die drei Säulen von Scrum sind Transparenz, Überprüfung und Anpassung.;Die drei Säulen von Scrum sind Planung, Entwicklung und Test.;Die drei Säulen von Scrum sind Hierarchie, Kontrolle und Dokumentation.
@@ -33,9 +33,9 @@ Wie viele Personen sollte ein Scrum Team idealerweise haben?;Ein Scrum Team soll
 Was passiert, wenn ein Product Backlog-Eintrag nicht der Definition of Done entspricht?;Wenn ein Product Backlog-Eintrag nicht der Definition of Done entspricht, kann er nicht released oder beim Sprint Review präsentiert werden und wandert zurück ins Product Backlog.;Wenn ein Product Backlog-Eintrag nicht der Definition of Done entspricht, wird er automatisch aus dem Projekt entfernt.;Wenn ein Product Backlog-Eintrag nicht der Definition of Done entspricht, wird er trotzdem veröffentlicht und später korrigiert.
 Wer erstellt das Sprint-Ziel?;Das Sprint-Ziel wird während des Sprint Planning-Events vom gesamten Scrum Team erstellt.;Das Sprint-Ziel wird ausschließlich vom Product Owner festgelegt.;Das Sprint-Ziel wird vom Management vorgegeben und kann nicht vom Team beeinflusst werden.
 Was ist der Unterschied zwischen dem Product Backlog und dem Sprint Backlog?;Das Product Backlog enthält alle Anforderungen für das Produkt, während das Sprint Backlog die für den aktuellen Sprint ausgewählten Einträge und einen Plan zu deren Umsetzung enthält.;Das Product Backlog und das Sprint Backlog sind identisch und können synonym verwendet werden.;Das Product Backlog enthält technische Details, während das Sprint Backlog Kundenanforderungen enthält.
-  `;
-
-  const questions = parseCSV(csvData);
+`
+;
+  const questions = parseCSV(questionData);
   displayRandomQuestion(questions);
 });
 
@@ -71,13 +71,23 @@ function displayRandomQuestion(questions) {
   const answersToDisplay = [...questionObj.answers];
   shuffleArray(answersToDisplay);
 
+  const answerButtons = [];
+  let correctButton = null;
+
   answersToDisplay.forEach(answer => {
     const answerButton = document.createElement('button');
     answerButton.textContent = answer;
     answerButton.style.cursor = 'pointer';
     answerButton.style.padding = '10px';
     answerButton.style.borderRadius = '8px';
+
+    if (answer === questionObj.correctAnswer) {
+      correctButton = answerButton;
+    }
+    
     answerButton.addEventListener('click', function() {
+      disableButtons(answerButtons);
+
       if (answer === questionObj.correctAnswer) {
         answerButton.style.backgroundColor = 'green';
         currentStreak += 1;
@@ -86,11 +96,19 @@ function displayRandomQuestion(questions) {
         setTimeout(() => displayRandomQuestion(questions), 1000);
       } else {
         answerButton.style.backgroundColor = 'red';
+        correctButton.style.backgroundColor = 'green';
         currentStreak = 0;
         document.getElementById('streak').textContent = currentStreak;
+
+        setTimeout(() => displayRandomQuestion(questions), 5000);
       }
     });
 
     questionContainer.appendChild(answerButton);
+    answerButtons.push(answerButton);
   });
+}
+
+function disableButtons(buttons) {
+  buttons.forEach(button => button.disabled = true);
 }
